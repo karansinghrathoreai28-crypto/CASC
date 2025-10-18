@@ -1,0 +1,14 @@
+opencv-python
+opencv-contrib-python
+numpy
+azure-cognitiveservices-vision-computervision
+azure-cosmos
+requests
+pyyaml
+pillow
+python-dotenv
+openai
+msrest
+deepface
+tf-keras
+mediapipe
