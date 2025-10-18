@@ -1,153 +1,78 @@
-# CASC - Contextual Aware Security Cam
+##CASC: The Contextual-Aware Security Cam 
+CASC isn't just another security camera; it's an intelligent security analyst. While traditional systems just show you a video feed, CASC watches the feed, understands what's happening, and describes it to you in plain English. It transforms your security camera from a passive recorder into an active, conversational security partner.
 
-An intelligent security camera system that provides natural language descriptions of security events and allows interactive Q&A.
+This system goes beyond simple motion alerts by analyzing the context of an event, allowing you to get immediate, detailed insights and even ask follow-up questions.
 
-## Features
+#What Makes CASC Different?
+The problem with most security systems is "alert fatigue"—endless notifications for meaningless events like a cat walking by or a tree branch swaying. CASC solves this by focusing on what matters.
 
-- **Motion Detection**: Uses OpenCV to detect meaningful motion
-- **Contextual Analysis**: Azure AI Vision analyzes what's happening
-- **Face Recognition**: Azure Face API identifies known vs unknown persons
-- **Emotion Detection**: Detects facial attributes and quality
-- **Person Database**: Manage known persons for identification
-- **Natural Language**: AI-generated summaries in plain English
-- **Interactive Q&A**: Ask questions about security events
-- **Event Storage**: Azure Cosmos DB stores all events and conversations
+From Motion to Meaning: Instead of just detecting motion, CASC analyzes the frame to understand who is there and what they are doing.
 
-## Setup
+From Video to Vocabulary: It translates complex visual data into a simple, natural language summary. Instead of scrubbing through video, you get an instant report: "An unknown male, appearing to be in his late 20s, was detected near the main door."
 
-### 1. Install Dependencies
-```bash
+From Passive to Interactive: You can ask questions about any security event. Get immediate answers like "Was a person detected?" or "What was their estimated age?" without ever touching the video timeline.
+
+#Key Features
+Intelligent Motion Triggering: Uses OpenCV to filter out insignificant movements and only trigger analysis when something important happens.
+
+Advanced Facial & Attribute Analysis: Leverages the powerful DeepFace library to perform deep analysis on detected faces, identifying:
+
+Identity: Recognizes known individuals from a managed database.
+
+Emotion: Detects the emotional state (e.g., happy, neutral, angry).
+
+Age & Gender: Estimates the age and gender of individuals.
+
+Conversational Security Interface: Powered by state-of-the-art LLMs via OpenRouter, it generates human-like summaries and allows for interactive Q&A about security events.
+
+Robust Event Storage: All event data, including summaries, images, and conversations, are stored and indexed in Azure Cosmos DB for reliable, high-speed retrieval.
+
+#Real-World Impact
+CASC is more than a technical project; it's a blueprint for the future of accessible security and environmental awareness.
+
+For Home Security: Drastically reduces false alarms and gives homeowners immediate, understandable context during a potential break-in, allowing for faster, more informed decisions.
+
+For Small Businesses: Can provide insights into customer demographics (age, gender) at storefronts or monitor sensitive areas after hours with a higher degree of intelligence.
+
+For Workplace Safety: Can be adapted to monitor restricted zones, ensuring only authorized personnel are present and providing a detailed log of all activity.
+
+#Powerful Technology Stack
+This project is built on a foundation of cutting-edge, industry-standard tools:
+
+Backend: Python
+
+Computer Vision: OpenCV
+
+Facial Analysis: DeepFace
+
+Language Models: Various models via OpenRouter (e.g., Llama 3, Gemma)
+
+Database: Microsoft Azure Cosmos DB (NoSQL)
+
+#Setup
+1. Install Dependencies
+Bash
+
 pip install -r requirements.txt
-```
+2. Configure Credentials
+Edit config/config.yaml and add your API keys for OpenRouter and Azure Cosmos DB.
 
-### 2. Configure Credentials
-Edit `config/config.yaml` and add your API keys:
-- Azure AI Vision endpoint and key
-- OpenRouter API key
-- Azure Cosmos DB endpoint and key
+3. Test Your Setup
+It is highly recommended to run the connection tests to ensure all services are configured correctly.
 
-### 3. Test Connections
+Run a full system check:
 
-**Run all tests:**
-```bash
+Bash
+
 python test_connections.py
-```
+Test individual components:
 
-**Test individual components:**
+Bash
 
-OpenRouter API only:
-```bash
 python test_openrouter.py
-```
-
-Azure Cosmos DB only:
-```bash
 python test_database.py
-```
+python test_deepface.py
+4. Run the Application
+Bash
 
-Azure Face API only:
-```bash
-python test_azure_face.py
-```
-
-These tests will verify:
-- **test_connections.py**: All components (quick overview)
-- **test_openrouter.py**: OpenRouter API, multiple models, Q&A functionality
-- **test_database.py**: Cosmos DB CRUD operations, queries, performance
-- **test_azure_face.py**: Face detection, recognition, person management
-
-### 4. Run the Application
-```bash
-cd src
-python main.py
-```
-
-## Usage
-
-1. **Start Monitoring**: The system will continuously monitor the camera feed
-2. **Motion Detection**: When motion is detected, the system:
-   - Captures the frame
-   - Analyzes it with Azure Vision
-   - Generates a contextual summary
-   - Saves everything to the database
-3. **Ask Questions**: After each event, you can ask questions like:
-   - "How many people were detected?"
-   - "What objects were in the frame?"
-   - "Was this a false alarm?"
-
-## Configuration
-
-- Adjust motion sensitivity in `config.yaml`
-- Change cooldown period between detections
-- Toggle image storage on/off
-- Configure different AI models
-
-## Troubleshooting
-
-If `test_connections.py` shows failures:
-
-1. **Dependencies Failed**: Run `pip install -r requirements.txt` again
-2. **Camera Failed**: Check if another app is using the camera
-3. **Azure Vision Failed**: Verify endpoint URL and API key
-4. **OpenRouter Failed**: Check API key and model availability
-5. **Cosmos DB Failed**: Verify endpoint, key, and firewall rules
-
-### Camera Not Opening
-
-If the camera doesn't open, run these tests in order:
-
-1. **Basic camera test:**
-```bash
-python test_camera.py
-```
-
-2. **Live detector test:**
-```bash
-python src/live_detector.py
-```
-
-3. **Full system test:**
-```bash
-python src/server.py
-```
-
-**Common camera issues:**
-- Another app is using the camera (close Zoom, Teams, etc.)
-- Camera permissions not granted (check Windows Settings > Privacy > Camera)
-- Wrong camera index (try changing `source: 0` to `source: 1` in config.yaml)
-
-### Detection Not Working
-
-**Test which detectors work for you:**
-```bash
-python test_detection_comparison.py
-```
-
-Press 'p' during the test to print detection counts.
-
-**Common issues with Haar Cascade body detection:**
-
-1. **Full body detector very unreliable** - This is a known limitation
-   - Requires person to be 6-10 feet from camera
-   - Person must be fully visible and upright
-   - Often fails in typical webcam scenarios
-
-2. **Upper body detector more reliable**
-   - Works at closer range
-   - Better for desk/room monitoring
-   - Now enabled by default in the system
-
-3. **Face detection most reliable**
-   - Works at any reasonable distance
-   - Good for identifying presence
-   - Falls back to this if body detection fails
-
-**Tips for better detection:**
-- Ensure good lighting
-- Stand upright facing camera
-- Remove clutter from background
-- For body detection, stand further back (6-10 feet)
-- Upper body detection works best for typical webcam setups
-
-## Architecture
-
+python src/main.py
